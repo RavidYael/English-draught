@@ -12,28 +12,15 @@ namespace Game_Logic
         private Point m_Location;
         private Piece m_Piece;
 
-        public Cell (int i_Row, int i_Col, int i_BoardSize)
+        public Cell (int i_Row, int i_Col, Piece i_Piece)
         {
-            int numberOfRowsForPlayer = ((i_BoardSize / 2) - 1);
-            bool playerOCell = i_Row < numberOfRowsForPlayer;
-            bool playerXCell = i_Row >= numberOfRowsForPlayer + 2;
-            bool differInParity = checkDifferInParity(i_Row, i_Col);
-            bool emptyRow = (i_Row >= numberOfRowsForPlayer) && (i_Row < numberOfRowsForPlayer + 2);
+            m_IsOccupied = true;
+            m_Location = new Point(i_Row, i_Col);
+            m_Piece = i_Piece;
+        }
 
-            if(differInParity && !emptyRow)
-            {
-                m_IsOccupied = true;
-
-                if(playerOCell)
-                {
-                    m_Piece = new Piece(eToken.O);
-                }
-                else if(playerXCell)
-                {
-                    m_Piece = new Piece(eToken.X);
-                }
-            }
-
+        public Cell(int i_Row, int i_Col)
+        {
             m_Location = new Point(i_Row, i_Col);
         }
 
@@ -68,6 +55,10 @@ namespace Game_Logic
             }
         }
 
-
+        public Point Location
+        {
+            get {return m_Location;} 
+            set { m_Location = value;}
+        }
     }
 }
