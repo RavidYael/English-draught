@@ -27,18 +27,23 @@ namespace Game_Logic
             m_Pieces = new List<Piece>();
         }
 
-        public ePlayerType PlayerType
+        internal ePlayerType PlayerType
         {
             get { return m_PlayerType; }
             set { m_PlayerType = value; }
         }
 
-        public void AddPiece(Piece i_Piece)
+        internal List<Piece> Pieces
+        {
+            get {return m_Pieces;}
+        }
+
+         internal void addPiece(Piece i_Piece)
         {
             m_Pieces.Add(i_Piece);
         }
 
-        public void RemovePiece(Piece i_Piece)
+         internal void removePiece(Piece i_Piece)
         {
             m_Pieces.Remove(i_Piece);
         }

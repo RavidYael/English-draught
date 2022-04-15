@@ -16,42 +16,72 @@ namespace Game_Logic
         private eToken m_Token;
         private bool m_IsKing = false;
         private Point m_Location;
-        private List<Cell> m_ValidMoves;
-
-        public Piece()
-        {
-        }
-
-        public Piece(eToken i_Token, Point i_location)
+        private List<Move> m_ValidMoves;
+        internal Piece(eToken i_Token, Point i_location)
         {
             m_Token = i_Token;
             m_Location = i_location;
+            m_ValidMoves = new List<Move>();
         }
 
-        public eToken Token
+        internal eToken Token
         {
             get { return m_Token; }
 
             set { m_Token = value; }
         }
 
-        public bool IsKing
+        internal bool IsKing
         {
             get { return m_IsKing; }
 
             set { m_IsKing = value; }
         }
 
-        public Point Location
+        internal Point Location
         {
             get {return m_Location;}
 
             set { m_Location = value;}
         }
 
-        public void AddMove(Cell i_CellToAdd)
+        internal List<Move> ValidMoves
         {
-            m_ValidMoves.Add(i_CellToAdd);
+            get { return m_ValidMoves;}
+        }
+
+        internal void AddMove(Move i_MoveToAdd)
+        {
+            m_ValidMoves.Add(i_MoveToAdd);
+        }
+
+        internal bool moveContainsCell(Cell i_isContains)
+        {
+            bool contains = false;
+
+            foreach(Move move in m_ValidMoves)
+            {
+                if(move.Cell == i_isContains)
+                {
+                    contains = true;
+                }
+            }
+
+            return contains;
+        }
+
+        internal Move getMove(Cell i_Cell)
+        {
+            Move desiredMove = null;
+            foreach(Move move in m_ValidMoves)
+            {
+                if(move.Cell == i_Cell)
+                {
+                    desiredMove = move;
+                }
+            }
+
+            return desiredMove;
         }
     }
 }

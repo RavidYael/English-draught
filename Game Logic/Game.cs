@@ -11,12 +11,14 @@ namespace Game_Logic
         private GameBoard m_Board;
         private Player m_PlayerO;
         private Player m_PlayerX;
+        private eToken m_WhosTurn;
 
         public Game(int i_BoardSize, int i_NumOfPlayers, string i_PlayerName1, string i_PlayerName2 = "computer")
         {
             m_Board = new GameBoard(i_BoardSize);
             m_PlayerO = new Player(i_PlayerName1, eToken.O, ePlayerType.Human);
             m_PlayerX = new Player(i_PlayerName2, eToken.X);
+            m_WhosTurn = eToken.O;
 
             if(i_NumOfPlayers == 2)
             {
@@ -24,12 +26,62 @@ namespace Game_Logic
             }
 
             initializePiecesForPlayers();
+            updateValidMovesForPlayer(m_PlayerO);
+            updateValidMovesForPlayer(m_PlayerX);
+        }
+
+        private void updateValidMovesForPlayer(Player i_Player)
+        {
+            foreach(Piece piece in i_Player.Pieces)
+            {
+                generateValidMovesForPiece(piece);
+            }
+        }
+
+        private Player getPlayerByToken(eToken i_Token)
+        {
+            Player returnedPlayer = null;
+            if(i_Token == eToken.O)
+            {
+                returnedPlayer = m_PlayerO;
+            }
+            else
+            {
+                returnedPlayer = m_PlayerX;
+            }
+
+            return returnedPlayer;
+        }
+
+        private eToken getOppositeToken(eToken i_Token)
+        {
+            eToken oppositeToken;
+            if(i_Token == eToken.O)
+            {
+                oppositeToken = eToken.X;
+            }
+            else
+            {
+                oppositeToken = eToken.O;
+            }
+
+            return oppositeToken;
         }
 
         private void initializePiecesForPlayers()
         {
-            Cell[,] board = m_Board.getBoard();
-
+            List<Piece> allPieces = m_Board.allPieces;
+            foreach(Piece piece in allPieces)
+            {
+                if(piece.Token == eToken.X)
+                {
+                    m_PlayerX.addPiece(piece);
+                }
+                else if(piece.Token == eToken.O)
+                {
+                    m_PlayerO.addPiece(piece);
+                }
+            }
         }
 
         public void PrintBoard()
@@ -44,6 +96,7 @@ namespace Game_Logic
 
         private void generateValidMovesForPiece(Piece i_Piece)
         {
+            i_Piece.ValidMoves.Clear();
             Cell[,] board = m_Board.getBoard();
             int pieceRow = i_Piece.Location.Row;
             int pieceCol = i_Piece.Location.Column;
@@ -68,7 +121,6 @@ namespace Game_Logic
                         updatePossibleMovesForDirection(i_Piece, -1, 1);
                     }
                 }
-
             }
 
             else if(i_Piece.Token == eToken.O)
@@ -98,9 +150,8 @@ namespace Game_Logic
 
             if(!cellToCheck.IsOccupied)
             {
-                i_Piece.AddMove(cellToCheck);
+                i_Piece.AddMove(new Move(cellToCheck));
             }
-
             else
             {
                 if(cellToCheck.Piece.Token != i_Piece.Token)
@@ -110,11 +161,7 @@ namespace Game_Logic
             }
         }
 
-        private void checkAndUpdateIfEatPossible(
-            Piece i_Piece,
-            Point i_LocationToEat,
-            int i_EatRowDirection,
-            int i_EatColumnDirection)
+        private void checkAndUpdateIfEatPossible(Piece i_Piece, Point i_LocationToEat, int i_EatRowDirection, int i_EatColumnDirection)
         {
             int afterEatRow = i_LocationToEat.Row + i_EatRowDirection;
             int afterEatColumn = i_LocationToEat.Column + i_EatColumnDirection;
@@ -124,12 +171,69 @@ namespace Game_Logic
             if(afterEatInsideRowBounds && afterEatInsideColumnBounds)
             {
                 Cell afterEatCell = m_Board.getCell(afterEatRow, afterEatColumn);
+                Cell CellToEat = m_Board.getCell(i_LocationToEat.Row, i_LocationToEat.Column);
 
                 if(!afterEatCell.IsOccupied)
                 {
-                    i_Piece.AddMove(afterEatCell);
+                    i_Piece.AddMove(new Move(afterEatCell,true,CellToEat));
                 }
             }
+        }
+
+        public void MakeMove(char i_FromRowChar, char i_FromColumnChar, char i_ToRowChar, char i_ToColumnChar)
+        {
+            Cell from = m_Board.getCell(i_FromRowChar, i_FromColumnChar);
+            Cell to = m_Board.getCell(i_ToRowChar, i_ToColumnChar);
+            Move moveToMake = from.Piece.getMove(to);
+
+            if(moveToMake.IsEatingMove)
+            {
+                removePieceFromPlayer(moveToMake.CellEaten.Piece);
+                moveToMake.CellEaten.removePiece();
+            }
+            else
+            {
+                from.movePiece(to);
+            }
+
+            updateValidMovesForPlayer(getPlayerByToken(getOppositeToken(m_WhosTurn)));
+        }
+
+        private void removePieceFromPlayer(Piece i_PieceToRemove)
+        {
+            if(i_PieceToRemove.Token == eToken.O)
+            {
+                m_PlayerO.removePiece(i_PieceToRemove);
+            }
+            else
+            {
+                m_PlayerX.removePiece(i_PieceToRemove);
+            }
+        }
+
+        public bool IsValidMove(char i_FromRowChar, char i_FromColumnChar, char i_ToRowChar, char i_ToColumnChar, out string o_ErrorMessage)
+        {
+            o_ErrorMessage = "";
+            Cell from = m_Board.getCell(i_FromRowChar, i_FromColumnChar);
+            Cell to = m_Board.getCell(i_ToRowChar, i_ToColumnChar);
+            bool validMove = true;
+            if (!from.IsOccupied)
+            {
+                o_ErrorMessage = "Invalid move, no piece in that given location";
+                validMove = false;
+            }
+            else if (from.Piece.Token != m_WhosTurn)
+            {
+                o_ErrorMessage = string.Format("Invalid move, it is {}'s turn", m_WhosTurn);
+                validMove = false;
+            }
+            else if (!from.Piece.moveContainsCell(to))
+            {
+                o_ErrorMessage = "Invalid move";
+                validMove = false;
+            }
+
+            return validMove;
         }
     }
 }
