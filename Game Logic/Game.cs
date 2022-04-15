@@ -12,6 +12,14 @@ namespace Game_Logic
         private Player m_PlayerO;
         private Player m_PlayerX;
 
+        public Game(int i_BoardSize)
+        {
+            m_board = new GameBoard(i_BoardSize);
+        }
+        public void PrintBoard()
+        {
+            m_board.PrintBoard();
+        }
         //generate valid moves will be here
     }
 }
