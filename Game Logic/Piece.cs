@@ -14,7 +14,38 @@ namespace Game_Logic
     internal class Piece
     {
         private eToken m_Token;
-        private bool m_IsKing;
+        private bool m_IsKing = false;
         private List<Cell> m_ValidMoves;
+
+        public Piece(eToken i_Token)
+        {
+            m_Token = i_Token;
+        }
+
+        public eToken Token
+        {
+            get
+            {
+                return m_Token;
+            }
+
+            set
+            {
+                m_Token = value;
+            }
+        }
+
+        public bool IsKing
+        {
+            get
+            {
+                return m_IsKing;
+            }
+
+            set
+            {
+                m_IsKing = value;
+            }
+        }
     }
 }
