@@ -19,7 +19,7 @@ namespace Game_Logic
         private int m_Score = 0;
         private List<Piece> m_Pieces;
 
-        public Player(string i_Name, eToken i_Token, ePlayerType i_Type = ePlayerType.Machine)
+        internal Player(string i_Name, eToken i_Token, ePlayerType i_Type = ePlayerType.Machine)
         {
             m_Name = i_Name;
             m_PlayerType = i_Type;
@@ -38,7 +38,18 @@ namespace Game_Logic
             get {return m_Pieces;}
         }
 
-         internal void addPiece(Piece i_Piece)
+        public int Score
+        {
+            get {return m_Score;}
+            set { m_Score = value; }
+        }
+
+        public eToken Token
+        {
+            get { return m_Token;}
+        }
+
+        internal void addPiece(Piece i_Piece)
         {
             m_Pieces.Add(i_Piece);
         }
@@ -47,5 +58,37 @@ namespace Game_Logic
         {
             m_Pieces.Remove(i_Piece);
         }
+
+         internal bool IsOutOfMoves()
+         {
+             bool outOfMoves = true;
+             foreach(Piece piece in m_Pieces)
+             {
+                 if(piece.ValidMoves.Count != 0)
+                 {
+                     outOfMoves = false;
+                 }
+             }
+
+             return outOfMoves;
+         }
+
+         public int getPiecesWorth()
+         {
+             int worth = 0;
+             foreach(Piece piece in m_Pieces)
+             {
+                 if(piece.IsKing)
+                 {
+                     worth += 4;
+                 }
+                 else
+                 {
+                     worth++;
+                 }
+             }
+
+             return worth;
+         }
     }
 }

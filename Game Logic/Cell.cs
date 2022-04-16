@@ -70,14 +70,15 @@ namespace Game_Logic
         internal void placePiece(Piece i_Piece)
         {
             m_IsOccupied = true;
-            m_Piece = Piece;
+            m_Piece = i_Piece;
+            m_Piece.Location = m_Location;
         }
 
         internal void movePiece(Cell i_MoveTo)
         {
             i_MoveTo.IsOccupied = true;
             i_MoveTo.placePiece(m_Piece);
-            removePiece();
+            m_IsOccupied = false;
         }
     }
 }

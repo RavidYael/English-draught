@@ -37,6 +37,5 @@ namespace Game_Logic
         {
             get {return m_CellEaten;}
         }
-
     }
 }
