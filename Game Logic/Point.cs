@@ -11,19 +11,19 @@ namespace Game_Logic
         private int m_Row;
         private int m_Column;
 
-        public Point(int i_Row, int i_Col)
+        internal Point(int i_Row, int i_Col)
         {
             m_Row = i_Row;
             m_Column = i_Col;
         }
 
-        public int Row
+        internal int Row
         {
             get { return m_Row; }
             set { m_Row = value; }
         }
 
-        public int Column
+        internal int Column
         {
             get {return m_Column;}
             set { m_Column = value; }

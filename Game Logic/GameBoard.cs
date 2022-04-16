@@ -12,7 +12,7 @@ namespace Game_Logic
         private List<Piece> m_AllPieces;
         private int m_Size;
 
-        public GameBoard(int i_BoardSize)
+        internal GameBoard(int i_BoardSize)
         {
             m_AllPieces = new List<Piece>();
             allocateBoard(i_BoardSize);
@@ -86,7 +86,7 @@ namespace Game_Logic
             get {return m_AllPieces;}
         }
 
-        public void PrintBoard()
+        internal void PrintBoard()
         {
             Console.Write("   ");
             for (int k = 0; k < m_Size; k++)

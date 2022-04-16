@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,6 +13,8 @@ namespace Game_Logic
         private Player m_PlayerO;
         private Player m_PlayerX;
         private eToken m_WhosTurn;
+        private bool m_GameOnGoing = true;
+        private eToken m_Winner;
 
         public Game(int i_BoardSize, int i_NumOfPlayers, string i_PlayerName1, string i_PlayerName2 = "computer")
         {
@@ -56,7 +59,7 @@ namespace Game_Logic
         private eToken getOppositeToken(eToken i_Token)
         {
             eToken oppositeToken;
-            if(i_Token == eToken.O)
+            if (i_Token == eToken.O)
             {
                 oppositeToken = eToken.X;
             }
@@ -68,12 +71,17 @@ namespace Game_Logic
             return oppositeToken;
         }
 
+        private void switchTurn()
+        {
+            m_WhosTurn = getOppositeToken(m_WhosTurn);
+        }
+
         private void initializePiecesForPlayers()
         {
             List<Piece> allPieces = m_Board.allPieces;
             foreach(Piece piece in allPieces)
             {
-                if(piece.Token == eToken.X)
+                if (piece.Token == eToken.X)
                 {
                     m_PlayerX.addPiece(piece);
                 }
@@ -88,12 +96,7 @@ namespace Game_Logic
         {
             m_Board.PrintBoard();
         }
-
-        public void UpdateValidMoves()
-        {
-
-        }
-
+        
         private void generateValidMovesForPiece(Piece i_Piece)
         {
             i_Piece.ValidMoves.Clear();
@@ -122,7 +125,6 @@ namespace Game_Logic
                     }
                 }
             }
-
             else if(i_Piece.Token == eToken.O)
             {
                 bool moveInsideRowBounds = pieceRow + 1 < m_Board.Size;
@@ -180,7 +182,7 @@ namespace Game_Logic
             }
         }
 
-        public void MakeMove(char i_FromRowChar, char i_FromColumnChar, char i_ToRowChar, char i_ToColumnChar)
+        public void MakeMove(int i_FromRowChar, int i_FromColumnChar, int i_ToRowChar, int i_ToColumnChar)
         {
             Cell from = m_Board.getCell(i_FromRowChar, i_FromColumnChar);
             Cell to = m_Board.getCell(i_ToRowChar, i_ToColumnChar);
@@ -191,12 +193,43 @@ namespace Game_Logic
                 removePieceFromPlayer(moveToMake.CellEaten.Piece);
                 moveToMake.CellEaten.removePiece();
             }
-            else
-            {
-                from.movePiece(to);
-            }
 
-            updateValidMovesForPlayer(getPlayerByToken(getOppositeToken(m_WhosTurn)));
+            from.movePiece(to);
+            checkAndUpdateIfGameFinished();
+            if (m_GameOnGoing)
+            {
+                switchTurn();
+                updateValidMovesForPlayer(getPlayerByToken(m_WhosTurn));
+            }
+        }
+
+        private void checkAndUpdateIfGameFinished()
+        {
+            bool playerOHasNoPiecesLeft = m_PlayerO.Pieces.Count == 0;
+            bool playerOHasNoMovesLeft = m_PlayerO.IsOutOfMoves();
+            bool playerXHasNoPiecesLeft = m_PlayerX.Pieces.Count == 0;
+            bool playerXHasNoMovesLeft = m_PlayerX.IsOutOfMoves();
+
+            if(playerOHasNoPiecesLeft || playerOHasNoMovesLeft)
+            {
+                m_GameOnGoing = false;
+                m_Winner = eToken.X;
+                calculateScoreForPlayer(m_PlayerX);
+            }
+            else if (playerXHasNoPiecesLeft || playerXHasNoMovesLeft)
+            {
+                m_GameOnGoing = false;
+                m_Winner = eToken.O;
+                calculateScoreForPlayer(m_PlayerO);
+            }
+        }
+
+        private void calculateScoreForPlayer(Player i_WinningPlayer)
+        {
+            Player losingPlayer = getPlayerByToken(getOppositeToken(i_WinningPlayer.Token));
+            int winningPlayerPiecesWorth = i_WinningPlayer.getPiecesWorth();
+            int losingPlayerPiecesWorth = losingPlayer.getPiecesWorth();
+            i_WinningPlayer.Score = winningPlayerPiecesWorth - losingPlayerPiecesWorth;
         }
 
         private void removePieceFromPlayer(Piece i_PieceToRemove)
