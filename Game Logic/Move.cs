@@ -9,6 +9,7 @@ namespace Game_Logic
 {
     internal class Move
     {
+        private Cell m_MoveFrom;
         private Cell m_MoveTo;
         private bool m_isEatingMove = false;
         private Cell m_CellEaten;
@@ -16,14 +17,15 @@ namespace Game_Logic
         internal Move() // TODO is this okay?
         {}
 
-        internal Move(Cell i_MoveTo, bool i_IsEatingMove = false, Cell i_CellEaten = null)
+        internal Move(Cell i_MoveFrom, Cell i_MoveTo, bool i_IsEatingMove = false, Cell i_CellEaten = null)
         {
+            m_MoveFrom = i_MoveFrom;
             m_MoveTo = i_MoveTo;
             m_isEatingMove = i_IsEatingMove;
             m_CellEaten = i_CellEaten;
         }
 
-        internal Cell Cell
+        internal Cell MoveTo
         {
             get {return m_MoveTo;}
         }
@@ -36,6 +38,11 @@ namespace Game_Logic
         internal Cell CellEaten
         {
             get {return m_CellEaten;}
+        }
+
+        internal Cell MoveFrom
+        {
+            get {return m_MoveFrom;}
         }
     }
 }

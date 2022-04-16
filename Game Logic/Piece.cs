@@ -61,7 +61,7 @@ namespace Game_Logic
 
             foreach(Move move in m_ValidMoves)
             {
-                if(move.Cell == i_isContains)
+                if(move.MoveTo == i_isContains)
                 {
                     contains = true;
                 }
@@ -75,13 +75,34 @@ namespace Game_Logic
             Move desiredMove = null;
             foreach(Move move in m_ValidMoves)
             {
-                if(move.Cell == i_Cell)
+                if(move.MoveTo == i_Cell)
                 {
                     desiredMove = move;
                 }
             }
 
             return desiredMove;
+        }
+
+        public bool getEatingMove(out Move o_Move)
+        {
+            bool foundEatingMove = false;
+            o_Move = null;
+            foreach(Move move in m_ValidMoves)
+            {
+                if(move.IsEatingMove)
+                {
+                    o_Move = move;
+                    foundEatingMove = true;
+                }
+            }
+
+            return foundEatingMove;
+        }
+
+        public void makeKing()
+        {
+            m_IsKing = true;
         }
     }
 }

@@ -61,7 +61,7 @@ namespace Game_Logic
             set { m_Location = value;}
         }
 
-        internal void removePiece()
+        internal void removePieceFromCell()
         {
             m_IsOccupied = false;
             m_Piece = null;

@@ -12,12 +12,14 @@ namespace Game_Logic
         private GameBoard m_Board;
         private Player m_PlayerO;
         private Player m_PlayerX;
+        private int m_NumberOfHumanPlayers;
         private eToken m_WhosTurn;
         private bool m_GameOnGoing = true;
         private eToken m_Winner;
 
         public Game(int i_BoardSize, int i_NumOfPlayers, string i_PlayerName1, string i_PlayerName2 = "computer")
         {
+            m_NumberOfHumanPlayers = i_NumOfPlayers;
             m_Board = new GameBoard(i_BoardSize);
             m_PlayerO = new Player(i_PlayerName1, eToken.O, ePlayerType.Human);
             m_PlayerX = new Player(i_PlayerName2, eToken.X);
@@ -37,14 +39,21 @@ namespace Game_Logic
         {
             foreach(Piece piece in i_Player.Pieces)
             {
-                generateValidMovesForPiece(piece);
+                if (piece.IsKing)
+                {
+                    generateValidMovesForKingPiece(piece);
+                }
+                else
+                {
+                    generateValidMovesForPiece(piece);
+                }
             }
         }
 
         private Player getPlayerByToken(eToken i_Token)
         {
             Player returnedPlayer = null;
-            if(i_Token == eToken.O)
+            if (i_Token == eToken.O)
             {
                 returnedPlayer = m_PlayerO;
             }
@@ -71,9 +80,12 @@ namespace Game_Logic
             return oppositeToken;
         }
 
-        private void switchTurn()
+        private void switchTurn(bool i_DoubleTurn)
         {
-            m_WhosTurn = getOppositeToken(m_WhosTurn);
+            if(!i_DoubleTurn)
+            {
+                m_WhosTurn = getOppositeToken(m_WhosTurn);
+            }
         }
 
         private void initializePiecesForPlayers()
@@ -96,7 +108,7 @@ namespace Game_Logic
         {
             m_Board.PrintBoard();
         }
-        
+
         private void generateValidMovesForPiece(Piece i_Piece)
         {
             i_Piece.ValidMoves.Clear();
@@ -116,12 +128,12 @@ namespace Game_Logic
                 {
                     if(moveInsideLeftBounds)
                     {
-                        updatePossibleMovesForDirection(i_Piece, -1, -1);
+                        generatePossibleMovesForDirection(i_Piece, -1, -1);
                     }
 
                     if(moveInsideRightBounds)
                     {
-                        updatePossibleMovesForDirection(i_Piece, -1, 1);
+                        generatePossibleMovesForDirection(i_Piece, -1, 1);
                     }
                 }
             }
@@ -133,26 +145,63 @@ namespace Game_Logic
                 {
                     if(moveInsideLeftBounds)
                     {
-                        updatePossibleMovesForDirection(i_Piece, 1, -1);
+                        generatePossibleMovesForDirection(i_Piece, 1, -1);
                     }
 
                     if(moveInsideRightBounds)
                     {
-                        updatePossibleMovesForDirection(i_Piece, 1, 1);
+                        generatePossibleMovesForDirection(i_Piece, 1, 1);
                     }
                 }
             }
         }
 
-        private void updatePossibleMovesForDirection(Piece i_Piece, int i_RowDirection, int i_ColumnDirection)
+        private void generateValidMovesForKingPiece(Piece i_Piece)
+        {
+            int pieceRow = i_Piece.Location.Row;
+            int pieceCol = i_Piece.Location.Column;
+            bool moveInsideLeftBounds = pieceCol - 1 >= 0;
+            bool moveInsideRightBounds = pieceCol + 1 < m_Board.Size;
+            bool moveInsideRowBoundsUpwards = pieceRow - 1 >= 0;
+            bool moveInsideRowBoundsDownwards = pieceRow +1 < m_Board.Size;
+
+            if (moveInsideRowBoundsUpwards)
+            {
+                if(moveInsideLeftBounds)
+                {
+                    generatePossibleMovesForDirection(i_Piece, -1, -1);
+                }
+
+                if(moveInsideRightBounds)
+                {
+                    generatePossibleMovesForDirection(i_Piece,-1, 1);
+                }
+            }
+
+            if (moveInsideRowBoundsDownwards)
+            {
+                if (moveInsideLeftBounds)
+                {
+                    generatePossibleMovesForDirection(i_Piece, 1, -1);
+                }
+
+                if (moveInsideRightBounds)
+                {
+                    generatePossibleMovesForDirection(i_Piece, 1, 1);
+                }
+            }
+        }
+
+        private void generatePossibleMovesForDirection(Piece i_Piece, int i_RowDirection, int i_ColumnDirection)
         {
             int rowToCheck = i_Piece.Location.Row + i_RowDirection;
             int columnToCheck = i_Piece.Location.Column + i_ColumnDirection;
             Cell cellToCheck = m_Board.getCell(rowToCheck, columnToCheck);
+            Cell currentCell = m_Board.getCell(i_Piece.Location.Row, i_Piece.Location.Column);
 
             if(!cellToCheck.IsOccupied)
             {
-                i_Piece.AddMove(new Move(cellToCheck));
+                i_Piece.AddMove(new Move(currentCell, cellToCheck));
             }
             else
             {
@@ -172,35 +221,66 @@ namespace Game_Logic
 
             if(afterEatInsideRowBounds && afterEatInsideColumnBounds)
             {
+                Cell currentCell = m_Board.getCell(i_Piece.Location.Row, i_Piece.Location.Column);
+                Cell cellToEat = m_Board.getCell(i_LocationToEat.Row, i_LocationToEat.Column);
                 Cell afterEatCell = m_Board.getCell(afterEatRow, afterEatColumn);
-                Cell CellToEat = m_Board.getCell(i_LocationToEat.Row, i_LocationToEat.Column);
 
                 if(!afterEatCell.IsOccupied)
                 {
-                    i_Piece.AddMove(new Move(afterEatCell,true,CellToEat));
+                    i_Piece.AddMove(new Move(currentCell, afterEatCell, true, cellToEat));
                 }
             }
         }
 
-        public void MakeMove(int i_FromRowChar, int i_FromColumnChar, int i_ToRowChar, int i_ToColumnChar)
+        private void MakeMove(Move i_MoveToMake)
         {
-            Cell from = m_Board.getCell(i_FromRowChar, i_FromColumnChar);
-            Cell to = m_Board.getCell(i_ToRowChar, i_ToColumnChar);
-            Move moveToMake = from.Piece.getMove(to);
+            Cell fromCell = i_MoveToMake.MoveFrom;
+            Cell toCell = i_MoveToMake.MoveTo;
+            bool doubleTurn = false;
 
-            if(moveToMake.IsEatingMove)
+            if (i_MoveToMake.IsEatingMove)
             {
-                removePieceFromPlayer(moveToMake.CellEaten.Piece);
-                moveToMake.CellEaten.removePiece();
+                removePieceFromPlayer(i_MoveToMake.CellEaten.Piece);
+                i_MoveToMake.CellEaten.removePieceFromCell();
+                fromCell.movePiece(toCell);
+                updateValidMovesForPlayer(getPlayerByToken(m_WhosTurn));
+                doubleTurn = toCell.Piece.getEatingMove(out Move move);
+            }
+            else
+            {
+                fromCell.movePiece(toCell);
             }
 
-            from.movePiece(to);
+            checkAndUpdadeIfKing(toCell);
             checkAndUpdateIfGameFinished();
             if (m_GameOnGoing)
             {
-                switchTurn();
+                switchTurn(doubleTurn);
                 updateValidMovesForPlayer(getPlayerByToken(m_WhosTurn));
             }
+        }
+
+        private void checkAndUpdadeIfKing(Cell i_ToCell)
+        {
+            bool needsToBeKing = i_ToCell.Location.Row == 0 || i_ToCell.Location.Row == m_Board.Size;
+            if(needsToBeKing)
+            {
+                i_ToCell.Piece.makeKing();
+            }
+        }
+
+        public void MakeComputerMove()
+        {
+            Move moveToMake = m_PlayerX.getBestPossibleMove();
+            MakeMove(moveToMake);
+        }
+
+        public void MakeHumanMove(Point i_FromLocation, Point i_ToLocation)
+        {
+            Cell fromCell = m_Board.getCell(i_FromLocation.Row, i_FromLocation.Column);
+            Cell toCell = m_Board.getCell(i_ToLocation.Row, i_ToLocation.Column);
+            Move moveToMake = fromCell.Piece.getMove(toCell);
+            MakeMove(moveToMake);
         }
 
         private void checkAndUpdateIfGameFinished()
@@ -244,11 +324,11 @@ namespace Game_Logic
             }
         }
 
-        public bool IsValidMove(char i_FromRowChar, char i_FromColumnChar, char i_ToRowChar, char i_ToColumnChar, out string o_ErrorMessage)
+        public bool IsValidMove(Point i_FromLocation, Point i_ToLocation, out string o_ErrorMessage)
         {
             o_ErrorMessage = "";
-            Cell from = m_Board.getCell(i_FromRowChar, i_FromColumnChar);
-            Cell to = m_Board.getCell(i_ToRowChar, i_ToColumnChar);
+            Cell from = m_Board.getCell(i_FromLocation.Row, i_FromLocation.Column);
+            Cell to = m_Board.getCell(i_ToLocation.Row, i_ToLocation.Column);
             bool validMove = true;
             if (!from.IsOccupied)
             {
@@ -257,7 +337,7 @@ namespace Game_Logic
             }
             else if (from.Piece.Token != m_WhosTurn)
             {
-                o_ErrorMessage = string.Format("Invalid move, it is {}'s turn", m_WhosTurn);
+                o_ErrorMessage = string.Format("Invalid move, it is {0}'s turn", m_WhosTurn);
                 validMove = false;
             }
             else if (!from.Piece.moveContainsCell(to))
@@ -265,8 +345,38 @@ namespace Game_Logic
                 o_ErrorMessage = "Invalid move";
                 validMove = false;
             }
+            else if (getPlayerByToken(m_WhosTurn).getEatingMove(out Move eatingMove))
+            {
+                if (eatingMove.MoveTo.Piece != to.Piece)
+                {
+                    o_ErrorMessage = "Invalid move, you must execute eat move";
+                    validMove = false;
+                }
+            }
 
             return validMove;
         }
+
+        public bool OnGoing
+        {
+            get {return m_GameOnGoing;}
+        }
+
+        public string WhosTurnName
+        {
+            get {return getPlayerByToken(m_WhosTurn).Name;}
+        }
+
+        public int NumberOfHumanPlayers
+        {
+            get{ return m_NumberOfHumanPlayers;}
+        }
+
+        public bool isMachineTurn()
+        {
+            return getPlayerByToken(m_WhosTurn).PlayerType == ePlayerType.Machine;
+        }
+
+        
     }
 }
