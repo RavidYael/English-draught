@@ -8,13 +8,25 @@ namespace Game_Logic
 {
     internal class Point
     {
-        private char m_Row;
-        private char m_Column;
+        private int m_Row;
+        private int m_Column;
 
         public Point(int i_Row, int i_Col)
         {
-            m_Row = (char)(i_Row + 'A');
-            m_Column = (char)(i_Col + 'a');
+            m_Row = i_Row;
+            m_Column = i_Col;
+        }
+
+        public int Row
+        {
+            get { return m_Row; }
+            set { m_Row = value; }
+        }
+
+        public int Column
+        {
+            get {return m_Column;}
+            set { m_Column = value; }
         }
     }
 }

@@ -9,10 +9,12 @@ namespace Game_Logic
     internal class GameBoard
     {
         private Cell [,] m_Board;
+        private List<Piece> m_AllPieces;
         private int m_Size;
 
         public GameBoard(int i_BoardSize)
         {
+            m_AllPieces = new List<Piece>();
             allocateBoard(i_BoardSize);
             m_Size = i_BoardSize;
 
@@ -20,9 +22,48 @@ namespace Game_Logic
             {
                 for(int j = 0; j < m_Size; j++)
                 {
-                    m_Board[i, j] = new Cell(i, j, m_Size);
+                    m_Board[i, j] = makeCell(i, j);
                 }
             }
+        }
+
+        private Cell makeCell(int i_Row, int i_Column)
+        {
+            Cell newCell = new Cell(i_Row, i_Column);
+            Piece newPiece = null;
+
+            int numberOfRowsForPlayer = ((m_Size / 2) - 1);
+            bool playerOCell = i_Row < numberOfRowsForPlayer;
+            bool playerXCell = i_Row >= numberOfRowsForPlayer + 2;
+            bool differInParity = checkDifferInParity(i_Row, i_Column);
+            bool emptyRow = (i_Row >= numberOfRowsForPlayer) && (i_Row < numberOfRowsForPlayer + 2);
+
+            if(differInParity && !emptyRow)
+            {
+                if(playerOCell)
+                {
+                    newPiece = new Piece(eToken.O,newCell.Location);
+                }
+                else if(playerXCell)
+                {
+                    newPiece = new Piece(eToken.X, newCell.Location);
+                }
+
+                newCell = new Cell(i_Row, i_Column, newPiece);
+                m_AllPieces.Add(newPiece);
+            }
+
+            return newCell;
+        }
+
+        private bool checkDifferInParity(int i_Row, int i_Column)
+        {
+            return (i_Row % 2) != (i_Column % 2);
+        }
+
+        public int Size
+        {
+            get { return m_Size; }
         }
 
         private void allocateBoard(int i_BoardSize)
@@ -33,6 +74,11 @@ namespace Game_Logic
             //{
             //    m_Board.ElementAt(i) = new List<Cell>(i_BoardSize);
             //}
+        }
+
+        internal Cell[,] getBoard()
+        {
+            return m_Board;
         }
 
         public void PrintBoard()
@@ -106,6 +152,11 @@ namespace Game_Logic
 
                 Console.WriteLine("=");
             }
+        }
+
+        internal Cell getCell(int i_Row, int i_Column)
+        {
+            return m_Board[i_Row, i_Column];
         }
     }
 }

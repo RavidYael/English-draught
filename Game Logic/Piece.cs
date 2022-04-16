@@ -15,37 +15,43 @@ namespace Game_Logic
     {
         private eToken m_Token;
         private bool m_IsKing = false;
+        private Point m_Location;
         private List<Cell> m_ValidMoves;
 
-        public Piece(eToken i_Token)
+        public Piece()
+        {
+        }
+
+        public Piece(eToken i_Token, Point i_location)
         {
             m_Token = i_Token;
+            m_Location = i_location;
         }
 
         public eToken Token
         {
-            get
-            {
-                return m_Token;
-            }
+            get { return m_Token; }
 
-            set
-            {
-                m_Token = value;
-            }
+            set { m_Token = value; }
         }
 
         public bool IsKing
         {
-            get
-            {
-                return m_IsKing;
-            }
+            get { return m_IsKing; }
 
-            set
-            {
-                m_IsKing = value;
-            }
+            set { m_IsKing = value; }
+        }
+
+        public Point Location
+        {
+            get {return m_Location;}
+
+            set { m_Location = value;}
+        }
+
+        public void AddMove(Cell i_CellToAdd)
+        {
+            m_ValidMoves.Add(i_CellToAdd);
         }
     }
 }
