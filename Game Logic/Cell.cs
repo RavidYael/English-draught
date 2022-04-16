@@ -11,7 +11,7 @@ namespace Game_Logic
         private bool m_IsOccupied = false;
         private Point m_Location;
         private Piece m_Piece;
-
+// has to check with Guy if c'tor overloading is something we like in our code
         public Cell (int i_Row, int i_Col, Piece i_Piece)
         {
             m_IsOccupied = true;
