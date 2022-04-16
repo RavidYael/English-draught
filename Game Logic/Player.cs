@@ -49,6 +49,11 @@ namespace Game_Logic
             get { return m_Token;}
         }
 
+        public string Name
+        {
+            get {return m_Name;}
+        }
+
         internal void addPiece(Piece i_Piece)
         {
             m_Pieces.Add(i_Piece);
@@ -89,6 +94,51 @@ namespace Game_Logic
              }
 
              return worth;
+         }
+
+         public Move getBestPossibleMove() // as for now, the "best possible move" would be one that eats an opponent piece.
+         {
+             Move bestPossibleMove = null;
+             Move decentMove = null;
+             bool bestMoveFound = false;
+             foreach(Piece piece in m_Pieces)
+             {
+                 foreach(Move move in piece.ValidMoves)
+                 {
+                     decentMove = move;
+                     if(move.IsEatingMove)
+                     {
+                         bestPossibleMove = move;
+                         bestMoveFound = true;
+                     }
+                 }
+             }
+
+             if(!bestMoveFound)
+             {
+                 bestPossibleMove = decentMove;
+             }
+
+             return bestPossibleMove;
+         }
+
+         public bool getEatingMove(out Move i_Move)
+         {
+             i_Move = null;
+             bool foundEatingMove = false;
+             foreach(Piece piece in m_Pieces)
+             {
+                 foreach(Move move in piece.ValidMoves)
+                 {
+                     if(move.IsEatingMove)
+                     {
+                         i_Move = move;
+                         foundEatingMove = true;
+                     }
+                 }
+             }
+
+             return foundEatingMove;
          }
     }
 }
