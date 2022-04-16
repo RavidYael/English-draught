@@ -55,10 +55,29 @@ namespace Game_Logic
             }
         }
 
-        public Point Location
+        internal Point Location
         {
             get {return m_Location;} 
             set { m_Location = value;}
+        }
+
+        internal void removePiece()
+        {
+            m_IsOccupied = false;
+            m_Piece = null;
+        }
+
+        internal void placePiece(Piece i_Piece)
+        {
+            m_IsOccupied = true;
+            m_Piece = Piece;
+        }
+
+        internal void movePiece(Cell i_MoveTo)
+        {
+            i_MoveTo.IsOccupied = true;
+            i_MoveTo.placePiece(m_Piece);
+            removePiece();
         }
     }
 }

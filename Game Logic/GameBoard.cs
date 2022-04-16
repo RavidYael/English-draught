@@ -42,7 +42,7 @@ namespace Game_Logic
             {
                 if(playerOCell)
                 {
-                    newPiece = new Piece(eToken.O,newCell.Location);
+                    newPiece = new Piece(eToken.O, newCell.Location);
                 }
                 else if(playerXCell)
                 {
@@ -61,7 +61,7 @@ namespace Game_Logic
             return (i_Row % 2) != (i_Column % 2);
         }
 
-        public int Size
+        internal int Size
         {
             get { return m_Size; }
         }
@@ -79,6 +79,11 @@ namespace Game_Logic
         internal Cell[,] getBoard()
         {
             return m_Board;
+        }
+
+        internal List<Piece> allPieces
+        {
+            get {return m_AllPieces;}
         }
 
         public void PrintBoard()
@@ -108,7 +113,6 @@ namespace Game_Logic
                         Console.Write("   ");
                     }
 
-                    // WE NEED TO DO HERE SOMTHING ELSE FOR KINGS
                     else
                     {
                         if(m_Board[i, j].Piece.Token == eToken.O)
