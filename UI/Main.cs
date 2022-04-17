@@ -11,9 +11,8 @@ namespace UI
     {
         public static void Main(string[] args)
         {
-            Game game = new (10);
-            game.PrintBoard();
-            Console.ReadLine();
+            GameExecutor executor = new GameExecutor();
+            executor.Execute();
         }
     }
 }
