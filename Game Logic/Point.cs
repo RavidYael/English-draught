@@ -6,24 +6,24 @@ using System.Threading.Tasks;
 
 namespace Game_Logic
 {
-    internal class Point
+    public class Point
     {
         private int m_Row;
         private int m_Column;
 
-        internal Point(int i_Row, int i_Col)
+        public Point(int i_Row, int i_Col)
         {
             m_Row = i_Row;
             m_Column = i_Col;
         }
 
-        internal int Row
+        public int Row
         {
             get { return m_Row; }
             set { m_Row = value; }
         }
 
-        internal int Column
+        public int Column
         {
             get {return m_Column;}
             set { m_Column = value; }
