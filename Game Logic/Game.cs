@@ -119,8 +119,7 @@ namespace Game_Logic
             bool moveInsideLeftBounds = pieceCol - 1 >= 0;
             bool moveInsideRightBounds = pieceCol + 1 < m_Board.Size;
 
-            // TODO if piece is a king?
-            if(i_Piece.Token == eToken.X)
+            if (i_Piece.Token == eToken.X)
             {
                 bool moveInsideRowBounds = pieceRow - 1 >= 0;
 
@@ -158,6 +157,7 @@ namespace Game_Logic
 
         private void generateValidMovesForKingPiece(Piece i_Piece)
         {
+            i_Piece.ValidMoves.Clear();
             int pieceRow = i_Piece.Location.Row;
             int pieceCol = i_Piece.Location.Column;
             bool moveInsideLeftBounds = pieceCol - 1 >= 0;
@@ -199,7 +199,7 @@ namespace Game_Logic
             Cell cellToCheck = m_Board.getCell(rowToCheck, columnToCheck);
             Cell currentCell = m_Board.getCell(i_Piece.Location.Row, i_Piece.Location.Column);
 
-            if(!cellToCheck.IsOccupied)
+            if (!cellToCheck.IsOccupied)
             {
                 i_Piece.AddMove(new Move(currentCell, cellToCheck));
             }
@@ -219,13 +219,13 @@ namespace Game_Logic
             bool afterEatInsideRowBounds = afterEatRow < m_Board.Size && afterEatRow >= 0;
             bool afterEatInsideColumnBounds = afterEatColumn < m_Board.Size && afterEatColumn >= 0;
 
-            if(afterEatInsideRowBounds && afterEatInsideColumnBounds)
+            if (afterEatInsideRowBounds && afterEatInsideColumnBounds)
             {
                 Cell currentCell = m_Board.getCell(i_Piece.Location.Row, i_Piece.Location.Column);
                 Cell cellToEat = m_Board.getCell(i_LocationToEat.Row, i_LocationToEat.Column);
                 Cell afterEatCell = m_Board.getCell(afterEatRow, afterEatColumn);
 
-                if(!afterEatCell.IsOccupied)
+                if (!afterEatCell.IsOccupied)
                 {
                     i_Piece.AddMove(new Move(currentCell, afterEatCell, true, cellToEat));
                 }
@@ -345,9 +345,9 @@ namespace Game_Logic
                 o_ErrorMessage = "Invalid move";
                 validMove = false;
             }
-            else if (getPlayerByToken(m_WhosTurn).getEatingMove(out Move eatingMove))
+            else if (getPlayerByToken(m_WhosTurn).getEatingMove(out Move playerEatingMove))
             {
-                if (eatingMove.MoveTo.Piece != to.Piece)
+                if (!from.Piece.getEatingMove(out Move PieceEatingMove))
                 {
                     o_ErrorMessage = "Invalid move, you must execute eat move";
                     validMove = false;
@@ -371,12 +371,20 @@ namespace Game_Logic
         {
             get{ return m_NumberOfHumanPlayers;}
         }
-
         public bool isMachineTurn()
         {
             return getPlayerByToken(m_WhosTurn).PlayerType == ePlayerType.Machine;
         }
 
-        
+
+        public string getWinnerName()
+        {
+            return getPlayerByToken(m_Winner).Name;
+        }
+
+        public int getWinnerScore()
+        {
+            return getPlayerByToken(m_Winner).Score;
+        }
     }
 }

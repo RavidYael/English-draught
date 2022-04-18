@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{3B43ED38-25B2-4698-A310-BAC7A0F4D155}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>Game_Logic</RootNamespace>
     <AssemblyName>Game Logic</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
@@ -40,6 +43,7 @@
     <Compile Include="GameBoard.cs" />
     <Compile Include="Cell.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="Move.cs" />
     <Compile Include="Piece.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Point.cs" />
