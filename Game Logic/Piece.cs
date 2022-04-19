@@ -55,13 +55,13 @@ namespace Game_Logic
             m_ValidMoves.Add(i_MoveToAdd);
         }
 
-        internal bool moveContainsCell(Cell i_isContains)
+        internal bool hasValidMoveToInputCell(Cell i_destCell)
         {
             bool contains = false;
 
             foreach(Move move in m_ValidMoves)
             {
-                if(move.MoveTo == i_isContains)
+                if(move.DestCell == i_destCell)
                 {
                     contains = true;
                 }
@@ -75,7 +75,7 @@ namespace Game_Logic
             Move desiredMove = null;
             foreach(Move move in m_ValidMoves)
             {
-                if(move.MoveTo == i_Cell)
+                if(move.DestCell == i_Cell)
                 {
                     desiredMove = move;
                 }

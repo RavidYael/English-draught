@@ -108,7 +108,7 @@ namespace Game_Logic
                 for(int j = 0; j < m_Size; j++)
                 {
                     Console.Write("|");
-                    if(!m_Board[i, j].IsOccupied)
+                    if(!m_Board[i, j].Occupation)
                     {
                         Console.Write("   ");
                     }
@@ -123,7 +123,7 @@ namespace Game_Logic
                             }
                             else
                             {
-                                Console.WriteLine(" U ");
+                                Console.Write(" U ");
                             }
 
                         }
@@ -136,7 +136,7 @@ namespace Game_Logic
                             }
                             else
                             {
-                                Console.WriteLine(" K ");
+                                Console.Write(" K ");
                             }
                         }
                     }
@@ -160,7 +160,70 @@ namespace Game_Logic
 
         internal Cell getCell(int i_Row, int i_Column)
         {
-            return m_Board[i_Row, i_Column];
+            Point destPoint = new Point(i_Row, i_Column);
+            return getCell(destPoint);
+        }
+
+        internal Cell getCell(Point i_Point)
+        {
+            Cell desiredCell = null;
+            if (PointInsideBounds(i_Point))
+            {
+                desiredCell = m_Board[i_Point.Row, i_Point.Column];
+            }
+
+            return desiredCell;
+        }
+
+        internal bool PointInsideBounds(Point i_destPoint)
+        {
+            bool insideBounds = false;
+            if (insideRowBounds(i_destPoint.Row) && insideCollBounds(i_destPoint.Column))
+            {
+                insideBounds = true;
+            }
+
+            return insideBounds;
+        }
+
+
+        internal bool MoveInsideBounds(Point i_srcLocation, Move.Directions.Direction i_optionalDirection)
+        {
+            bool insideBounds = false;
+            if (insideRowBounds(i_srcLocation.Row + i_optionalDirection.VerticalMove) && insideCollBounds(i_srcLocation.Column + i_optionalDirection.HorizonalMove))
+            {
+                insideBounds = true;
+            }
+
+            return insideBounds;
+        }
+
+        private bool insideRowBounds(int i_rowLocation)
+        {
+            bool insideRowBounds = false;
+            if (i_rowLocation < m_Size && i_rowLocation >= 0)
+            {
+                insideRowBounds = true;
+            }
+
+            return insideRowBounds;
+        }
+        private bool insideCollBounds(int i_collLocation)
+        {
+            bool insideCollBounds = false;
+            if (i_collLocation < m_Size && i_collLocation >= 0)
+            {
+                insideCollBounds = true;
+            }
+
+          return insideCollBounds;
+        }
+
+        internal void MovePeice(Cell i_MoveFrom, Cell i_MoveTo)
+        {
+            i_MoveTo.placePiece(i_MoveFrom.Piece);
+            i_MoveFrom.Occupation = false;
+            i_MoveFrom.Piece = null;
         }
     }
 }
