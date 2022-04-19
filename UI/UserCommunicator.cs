@@ -1,16 +1,42 @@
-﻿using System;
+﻿using Game_Logic;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Game_Logic;
 
-namespace UI
+namespace User_Interface
 {
-    internal class UserMediator
+    public class UserCommunicator
     {
+        public void InformWhosTurn(String i_PlayerName)
+        {
+            Console.WriteLine(i_PlayerName + "'s turn");
+        }
+
+
+        public Exception PrintBoard()
+        {
+            return new NotImplementedException();
+        }
+
+       
+        public Game.GamePrefernces GetAndValidateGamePrefernces()
+        {
+            Game.GamePrefernces newGamePref = new Game.GamePrefernces();
+            newGamePref.OPlayerName = getAndValidateNameFromUser();
+            newGamePref.XPlayerName = "Computer";
+            newGamePref.BoardSize = getAndValidateBoardSizeFromUser();
+            newGamePref.NumberOfHumanPlayers = getAndValidateNumberOfPlayersFromUser();
+            if(newGamePref.NumberOfHumanPlayers == 2)
+            {
+                newGamePref.XPlayerName = getAndValidateNameFromUser();
+            }
+            return newGamePref;
+        }
         public string getAndValidateNameFromUser()
         {
+            Console.WriteLine("Hello! please enter your name:");
             string playerName;
             playerName = Console.ReadLine();
             bool allChars = isOnlyLetters(playerName);
@@ -24,6 +50,16 @@ namespace UI
             }
 
             return playerName;
+        }
+
+        public void InformError(string i_errorMessage)
+        {
+            Console.WriteLine(i_errorMessage + "\nPlease try again");
+        }
+
+        public void InformWinner(string i_WinnerName)
+        {
+            Console.WriteLine("Congratulations! "+ i_WinnerName + " is THE WINNER" );
         }
 
         private bool isOnlyLetters(string i_PlayerName)
@@ -42,10 +78,11 @@ namespace UI
 
         public int getAndValidateBoardSizeFromUser()
         {
+            Console.WriteLine("Please enter desired board size (6/8/10)");
             int desiredBoardSize;
             bool parsedSuccefull = int.TryParse(Console.ReadLine(), out desiredBoardSize);
             bool validBoardSize = desiredBoardSize == 6 || desiredBoardSize == 8 || desiredBoardSize == 10;
-            bool firstInput = true;
+
 
             while(!parsedSuccefull || !validBoardSize)
             {
@@ -57,8 +94,9 @@ namespace UI
             return desiredBoardSize;
         }
 
-        public int getAndValidateNumberOfPlayersFromUSer()
+        public int getAndValidateNumberOfPlayersFromUser()
         {
+            Console.WriteLine("Please enter number of players: (1/2)");
             int numberOfPlayers;
             bool parsedSuccefull = int.TryParse(Console.ReadLine(), out numberOfPlayers);
             bool validNumberOfPlayers = numberOfPlayers == 1 || numberOfPlayers == 2;
@@ -75,7 +113,7 @@ namespace UI
 
         public UserMoveInput getAndValidateMoveInputFromUser()
         {
-            Console.WriteLine("Make your move (For example: Ab>Cd");
+            Console.WriteLine("Make your move (For example: Ab>Cd)");
             UserMoveInput userMove = new UserMoveInput();
             string userInput = Console.ReadLine();
             //TODO validation
@@ -83,6 +121,7 @@ namespace UI
             string to = userInput.Substring(3, 2);
             userMove.From = new Point(charToIndex(from[1]), charToIndex(from[0]));
             userMove.To = new Point(charToIndex(to[1]), charToIndex(to[0]));
+
             return userMove;
         }
 
