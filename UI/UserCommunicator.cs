@@ -14,13 +14,11 @@ namespace User_Interface
             Console.WriteLine(i_PlayerName + "'s turn");
         }
 
-
         public Exception PrintBoard()
         {
             return new NotImplementedException();
         }
 
-       
         public Game.GamePrefernces GetAndValidateGamePrefernces()
         {
             Game.GamePrefernces newGamePref = new Game.GamePrefernces();
@@ -32,8 +30,10 @@ namespace User_Interface
             {
                 newGamePref.XPlayerName = getAndValidateNameFromUser();
             }
+
             return newGamePref;
         }
+
         public string getAndValidateNameFromUser()
         {
             Console.WriteLine("Hello! please enter your name:");
@@ -59,12 +59,13 @@ namespace User_Interface
 
         public void InformWinner(string i_WinnerName)
         {
-            Console.WriteLine("Congratulations! "+ i_WinnerName + " is THE WINNER" );
+            Console.WriteLine("Congratulations! " + i_WinnerName + " is THE WINNER" );
         }
 
         private bool isOnlyLetters(string i_PlayerName)
         {
             bool allLetters = true;
+
             foreach (char character in i_PlayerName)
             {
                 if (!char.IsLetter(character))
@@ -116,7 +117,13 @@ namespace User_Interface
             Console.WriteLine("Make your move (For example: Ab>Cd)");
             UserMoveInput userMove = new UserMoveInput();
             string userInput = Console.ReadLine();
-            //TODO validation
+            while(!validateUserMoveInput(userInput))
+            {
+                InformError("Wrong input, input should be in following format: Ab>Cd");
+                userInput = Console.ReadLine();
+                validateUserMoveInput(userInput);
+            }
+
             string from = userInput.Substring(0, 2);
             string to = userInput.Substring(3, 2);
             userMove.From = new Point(charToIndex(from[1]), charToIndex(from[0]));
@@ -125,20 +132,40 @@ namespace User_Interface
             return userMove;
         }
 
-        private int charToIndex(char i_ch)
+        private bool validateUserMoveInput(string i_UserInput)
+        {
+            bool coordinateValid = false;
+            bool lengthValid = i_UserInput.Length == 5;
+            if (lengthValid)
+            {
+                string from = i_UserInput.Substring(0, 2);
+                string to = i_UserInput.Substring(3, 2);
+                coordinateValid = validateMoveCoordinateInput(from) && validateMoveCoordinateInput(to);
+            }
+
+            bool seperatorSighValid = i_UserInput.ElementAt(2) == '>';
+
+            return lengthValid && coordinateValid && seperatorSighValid;
+        }
+
+        private bool validateMoveCoordinateInput(string i_ToValidate)
+        {
+            return char.IsUpper(i_ToValidate[0]) && char.IsLower(i_ToValidate[1]);
+        }
+
+        private int charToIndex(char i_Ch)
         {
             int resultingIndex;
-            if(char.IsLower(i_ch))
+            if (char.IsLower(i_Ch))
             {
-                resultingIndex = i_ch - 'a';
+                resultingIndex = i_Ch - 'a';
             }
             else
             {
-                resultingIndex = i_ch - 'A';
+                resultingIndex = i_Ch - 'A';
             }
 
             return resultingIndex;
         }
-
     }
 }

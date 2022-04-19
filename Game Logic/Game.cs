@@ -14,13 +14,9 @@ namespace Game_Logic
         private Player m_PlayerX;
         private eToken m_WhosTurn;
         private bool m_GameOnGoing = true;
-        private eToken m_Winner;
+        private string m_Winner;
         private GamePrefernces m_GamePrefernces;
-        
-        public String Winner
-        {
-            get { return getPlayerByToken(m_Winner).Name; }
-        }
+
         public class GamePrefernces
         {
             private int m_NumberOfHumanPlayers;
@@ -78,7 +74,7 @@ namespace Game_Logic
             updateValidMovesForPlayer(m_PlayerO);
             updateValidMovesForPlayer(m_PlayerX);
         }
-
+        
         private void updateValidMovesForPlayer(Player i_Player)
         {
             foreach(Piece piece in i_Player.Pieces)
@@ -101,6 +97,22 @@ namespace Game_Logic
             }
 
             return returnedPlayer;
+        }
+
+        private Player getPlayerByName(string i_Name)
+        {
+            Player toReturn;
+
+            if (m_PlayerO.Name == i_Name)
+            {
+                toReturn = m_PlayerO;
+            }
+            else
+            {
+                toReturn = m_PlayerX;
+            }
+
+            return toReturn;
         }
 
         private eToken getOppositeToken(eToken i_Token)
@@ -322,13 +334,13 @@ namespace Game_Logic
             if(playerOHasNoPiecesLeft || playerOHasNoMovesLeft)
             {
                 m_GameOnGoing = false;
-                m_Winner = eToken.X;
+                m_Winner = m_PlayerX.Name;
                 calculateScoreForPlayer(m_PlayerX);
             }
             else if (playerXHasNoPiecesLeft || playerXHasNoMovesLeft)
             {
                 m_GameOnGoing = false;
-                m_Winner = eToken.O;
+                m_Winner = m_PlayerO.Name;
                 calculateScoreForPlayer(m_PlayerO);
             }
         }
@@ -409,25 +421,20 @@ namespace Game_Logic
             get {return getPlayerByToken(m_WhosTurn).Name;}
         }
 
-        public int NumberOfHumanPlayers
-        {
-            get{ return m_NumberOfHumanPlayers;}
-        }
-
         public bool isMachineTurn()
         {
             return getPlayerByToken(m_WhosTurn).PlayerType == ePlayerType.Machine;
         }
 
 
-        public string getWinnerName()
+        public string Winner
         {
-            return getPlayerByToken(m_Winner).Name;
+            get { return getPlayerByName(m_Winner).Name;}
         }
 
         public int getWinnerScore()
         {
-            return getPlayerByToken(m_Winner).Score;
+            return getPlayerByName(m_Winner).Score;
         }
     }
 }
