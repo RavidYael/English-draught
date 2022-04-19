@@ -123,11 +123,9 @@ namespace Game_Logic
                             }
                             else
                             {
-                                Console.WriteLine(" U ");
+                                Console.Write(" U ");
                             }
-
                         }
-
                         else
                         {
                             if(!m_Board[i, j].Piece.IsKing)
@@ -136,7 +134,7 @@ namespace Game_Logic
                             }
                             else
                             {
-                                Console.WriteLine(" K ");
+                                Console.Write(" K ");
                             }
                         }
                     }
