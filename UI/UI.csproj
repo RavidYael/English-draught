@@ -39,12 +39,21 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Main.cs" />
     <Compile Include="Enums.cs" />
-    <Compile Include="GameExecuter.cs" />
+    <Compile Include="GameExecutor.cs" />
+    <Compile Include="UserMediator.cs" />
+    <Compile Include="UserMoveInput.cs" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Game Logic\GameLogic.csproj">
+      <Project>{3B43ED38-25B2-4698-A310-BAC7A0F4D155}</Project>
+      <Name>GameLogic</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -329,6 +329,9 @@ namespace Game_Logic
             o_ErrorMessage = "";
             Cell from = m_Board.getCell(i_FromLocation.Row, i_FromLocation.Column);
             Cell to = m_Board.getCell(i_ToLocation.Row, i_ToLocation.Column);
+ 
+          Move moveToValidate = from.Piece.getMove(to);
+
             bool validMove = true;
             if (!from.IsOccupied)
             {
