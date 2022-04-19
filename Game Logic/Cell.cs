@@ -29,7 +29,7 @@ namespace Game_Logic
             return (i_Row % 2) != (i_Col % 2);
         }
 
-        public bool IsOccupied
+        public bool Occupation
         {
             get
             {
@@ -74,11 +74,5 @@ namespace Game_Logic
             m_Piece.Location = m_Location;
         }
 
-        internal void movePiece(Cell i_MoveTo)
-        {
-            i_MoveTo.IsOccupied = true;
-            i_MoveTo.placePiece(m_Piece);
-            m_IsOccupied = false;
-        }
     }
 }

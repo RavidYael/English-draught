@@ -19,7 +19,7 @@ namespace Game_Logic
         private int m_Score = 0;
         private List<Piece> m_Pieces;
 
-        internal Player(string i_Name, eToken i_Token, ePlayerType i_Type = ePlayerType.Machine)
+        internal Player(string i_Name, eToken i_Token, ePlayerType i_Type = ePlayerType.Machine) //2 Players Machine issue
         {
             m_Name = i_Name;
             m_PlayerType = i_Type;

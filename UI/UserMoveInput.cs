@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Game_Logic;
 
-namespace UI
+namespace User_Interface
 {
-    internal class UserMoveInput
+    public class UserMoveInput
     {
         private Point m_From;
         private Point m_To;
@@ -23,5 +23,6 @@ namespace UI
             get {return m_To;}
             set {m_To = value;}
         }
+
     }
 }
