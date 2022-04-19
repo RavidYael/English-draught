@@ -140,5 +140,10 @@ namespace Game_Logic
 
              return foundEatingMove;
          }
+
+         public void ClearPieces()
+         {
+             m_Pieces.Clear();
+         }
     }
 }

@@ -44,7 +44,6 @@
     <Compile Include="Game.cs" />
     <Compile Include="GameBoard.cs" />
     <Compile Include="Cell.cs" />
-   <Compile Include="Game.cs" />
     <Compile Include="Move.cs" />
     <Compile Include="Piece.cs" />
     <Compile Include="Player.cs" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Resources;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +18,7 @@ namespace Game_Logic
         private string m_Winner;
         private GamePrefernces m_GamePrefernces;
 
+
         public class GamePrefernces
         {
             private int m_NumberOfHumanPlayers;
@@ -24,13 +26,6 @@ namespace Game_Logic
             private String m_OPlayerName;
             private String m_XPlayerName;
 
-            /*  public GamePrefernces(int i_NumberOfHumanPlayers, int i_BoardSize, String i_OPlayerName, String i_XPlayerName)
-              {
-                  m_NumberOfHumanPlayers = i_NumberOfHumanPlayers;
-                  m_BoardSize = i_BoardSize;
-                  m_OPlayerName = i_OPlayerName;
-                  m_XPlayerName = i_XPlayerName;
-              }*/
             public int NumberOfHumanPlayers
             {
                 get { return m_NumberOfHumanPlayers; }
@@ -54,18 +49,17 @@ namespace Game_Logic
                 get { return m_XPlayerName; }
                 set { m_XPlayerName = value; }
             }
-
         }
 
-        public Game(GamePrefernces i_gamePrefernces)
+        public Game(GamePrefernces i_GamePrefernces)
         {
-            m_GamePrefernces = i_gamePrefernces;
+            m_GamePrefernces = i_GamePrefernces;
             m_Board = new GameBoard(m_GamePrefernces.BoardSize);
             m_PlayerO = new Player(m_GamePrefernces.OPlayerName, eToken.O, ePlayerType.Human);
             m_PlayerX = new Player(m_GamePrefernces.XPlayerName, eToken.X);
             m_WhosTurn = eToken.O;
 
-            if(m_GamePrefernces.NumberOfHumanPlayers == 2)
+            if (m_GamePrefernces.NumberOfHumanPlayers == 2)
             {
                 m_PlayerX.PlayerType = ePlayerType.Human;
             }
@@ -74,12 +68,20 @@ namespace Game_Logic
             updateValidMovesForPlayer(m_PlayerO);
             updateValidMovesForPlayer(m_PlayerX);
         }
-        
+
+        public void PlayerQuits()
+        {
+            Player quittingPlayer = getPlayerByToken(m_WhosTurn);
+            m_Winner = getPlayerByToken(getOppositeToken(quittingPlayer.Token)).Name;
+            m_GameOnGoing = false;
+            calculateScoreForPlayer(getPlayerByToken(getOppositeToken(quittingPlayer.Token)));
+        }
+
         private void updateValidMovesForPlayer(Player i_Player)
         {
-            foreach(Piece piece in i_Player.Pieces)
+            foreach (Piece piece in i_Player.Pieces)
             {
-                    generateValidMovesForPiece(piece);
+                generateValidMovesForPiece(piece);
 
             }
         }
@@ -132,7 +134,7 @@ namespace Game_Logic
 
         private void switchTurn(bool i_DoubleTurn)
         {
-            if(!i_DoubleTurn)
+            if (!i_DoubleTurn)
             {
                 m_WhosTurn = getOppositeToken(m_WhosTurn);
             }
@@ -140,14 +142,16 @@ namespace Game_Logic
 
         private void initializePiecesForPlayers()
         {
+            m_PlayerO.ClearPieces();
+            m_PlayerX.ClearPieces();
             List<Piece> allPieces = m_Board.allPieces;
-            foreach(Piece piece in allPieces)
+            foreach (Piece piece in allPieces)
             {
                 if (piece.Token == eToken.X)
                 {
                     m_PlayerX.addPiece(piece);
                 }
-                else if(piece.Token == eToken.O)
+                else if (piece.Token == eToken.O)
                 {
                     m_PlayerO.addPiece(piece);
                 }
@@ -163,17 +167,17 @@ namespace Game_Logic
         {
             i_Piece.ValidMoves.Clear();
 
-            Move.Directions.Direction[] optionalDirections = getPieceOptionalDirectionsToMove(i_Piece);      
+            Move.Directions.Direction[] optionalDirections = getPieceOptionalDirectionsToMove(i_Piece);
 
             foreach (Move.Directions.Direction optionalDirection in optionalDirections)
             {
 
                 if (m_Board.MoveInsideBounds(i_Piece.Location, optionalDirection))
                 {
-                    
+
                     bool regularMoveWasAdded = checkAndAddRegularMoveIfPossible(i_Piece, optionalDirection);
 
-                    if(!regularMoveWasAdded)
+                    if (!regularMoveWasAdded)
                     {
                         addEatingMoveIfPossible(i_Piece, optionalDirection);
                     }
@@ -185,7 +189,7 @@ namespace Game_Logic
         {
             int rowToCheck = i_Piece.Location.Row + i_direction.VerticalMove;
             int columnToCheck = i_Piece.Location.Column + i_direction.HorizonalMove;
- 
+
             Cell cellToCheck = m_Board.getCell(rowToCheck, columnToCheck);
             Cell currentCell = m_Board.getCell(i_Piece.Location.Row, i_Piece.Location.Column);
 
@@ -262,7 +266,7 @@ namespace Game_Logic
             checkAndUpdadeIfKing(i_MoveToMake);
             switchTurn(doubleTurn);
             continueGameDependOnStatus();
-            
+
         }
 
         private void checkAndUpdadeIfKing(Move i_lastMove)
@@ -280,7 +284,7 @@ namespace Game_Logic
         {
             m_Board.MovePeice(i_MoveToMake.SrcCell, i_MoveToMake.DestCell);
         }
-        
+
         private void makeEatingMove(Move i_MoveToMake)
         {
             Cell srcCell = i_MoveToMake.SrcCell;
@@ -297,13 +301,13 @@ namespace Game_Logic
             if (m_GameOnGoing)
             {
                 updateValidMovesForPlayer(getPlayerByToken(m_WhosTurn));
-            }       
+            }
         }
 
         private void checkAndUpdadeIfKing(Cell i_ToCell)
         {
             bool needsToBeKing = i_ToCell.Location.Row == 0 || i_ToCell.Location.Row == m_Board.Size;
-            if(needsToBeKing)
+            if (needsToBeKing)
             {
                 i_ToCell.Piece.makeKing();
             }
@@ -331,7 +335,7 @@ namespace Game_Logic
             bool playerXHasNoPiecesLeft = m_PlayerX.Pieces.Count == 0;
             bool playerXHasNoMovesLeft = m_PlayerX.IsOutOfMoves();
 
-            if(playerOHasNoPiecesLeft || playerOHasNoMovesLeft)
+            if (playerOHasNoPiecesLeft || playerOHasNoMovesLeft)
             {
                 m_GameOnGoing = false;
                 m_Winner = m_PlayerX.Name;
@@ -350,12 +354,12 @@ namespace Game_Logic
             Player losingPlayer = getPlayerByToken(getOppositeToken(i_WinningPlayer.Token));
             int winningPlayerPiecesWorth = i_WinningPlayer.getPiecesWorth();
             int losingPlayerPiecesWorth = losingPlayer.getPiecesWorth();
-            i_WinningPlayer.Score = winningPlayerPiecesWorth - losingPlayerPiecesWorth;
+            i_WinningPlayer.Score += winningPlayerPiecesWorth - losingPlayerPiecesWorth;
         }
 
         private void removePieceFromPlayer(Piece i_PieceToRemove)
         {
-            if(i_PieceToRemove.Token == eToken.O)
+            if (i_PieceToRemove.Token == eToken.O)
             {
                 m_PlayerO.removePiece(i_PieceToRemove);
             }
@@ -402,8 +406,8 @@ namespace Game_Logic
                 {
                     if (!moveToValidate.IsEatingMove)
                     {
-                            o_ErrorMessage = "Invalid move: Eating move must be execute";
-                            validMove = false;
+                        o_ErrorMessage = "Invalid move: Eating move must be execute";
+                        validMove = false;
                     }
                 }
             }
@@ -411,14 +415,24 @@ namespace Game_Logic
             return validMove;
         }
 
+        public void Reset()
+        {
+            m_Board = new GameBoard(m_Board.Size);
+            m_GameOnGoing = true;
+            initializePiecesForPlayers();
+            updateValidMovesForPlayer(m_PlayerO);
+            updateValidMovesForPlayer(m_PlayerX);
+            m_WhosTurn = eToken.O;
+        }
+
         public bool OnGoing
         {
-            get {return m_GameOnGoing;}
+            get { return m_GameOnGoing; }
         }
 
         public string WhosTurnName
         {
-            get {return getPlayerByToken(m_WhosTurn).Name;}
+            get { return getPlayerByToken(m_WhosTurn).Name; }
         }
 
         public bool isMachineTurn()
@@ -426,10 +440,9 @@ namespace Game_Logic
             return getPlayerByToken(m_WhosTurn).PlayerType == ePlayerType.Machine;
         }
 
-
         public string Winner
         {
-            get { return getPlayerByName(m_Winner).Name;}
+            get { return getPlayerByName(m_Winner).Name; }
         }
 
         public int getWinnerScore()
