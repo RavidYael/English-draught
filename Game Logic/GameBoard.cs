@@ -125,9 +125,7 @@ namespace Game_Logic
                             {
                                 Console.Write(" U ");
                             }
-
                         }
-
                         else
                         {
                             if(!m_Board[i, j].Piece.IsKing)

@@ -216,7 +216,6 @@ namespace Game_Logic
         private Move.Directions.Direction[] getPieceOptionalDirectionsToMove(Piece i_Piece)
         {
             Move.Directions.Direction[] optionalDirections = null;
-
             if (i_Piece.IsKing)
             {
                 optionalDirections = Move.Directions.KingDirections;
@@ -370,7 +369,6 @@ namespace Game_Logic
                 o_ErrorMessage = "Invalid move: Cell (destination/source) is out of bounds";
                 validMove = false;
             }
-
             if (validMove)
             {
                 if (!from.Occupation)
@@ -411,11 +409,25 @@ namespace Game_Logic
             get {return getPlayerByToken(m_WhosTurn).Name;}
         }
 
+        public int NumberOfHumanPlayers
+        {
+            get{ return m_NumberOfHumanPlayers;}
+        }
+
         public bool isMachineTurn()
         {
             return getPlayerByToken(m_WhosTurn).PlayerType == ePlayerType.Machine;
         }
 
-        
+
+        public string getWinnerName()
+        {
+            return getPlayerByToken(m_Winner).Name;
+        }
+
+        public int getWinnerScore()
+        {
+            return getPlayerByToken(m_Winner).Score;
+        }
     }
 }
