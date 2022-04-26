@@ -200,6 +200,7 @@ namespace User_Interface
 
         public void PrintBoard(GameBoard i_Board)
         {
+            Ex02.ConsoleUtils.Screen.Clear();
             Console.Write("   ");
             for (int k = 0; k < i_Board.Size ; k++)
             {
