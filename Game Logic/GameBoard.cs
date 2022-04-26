@@ -31,7 +31,6 @@ namespace Game_Logic
         {
             Cell newCell = new Cell(i_Row, i_Column);
             Piece newPiece = null;
-
             int numberOfRowsForPlayer = ((m_Size / 2) - 1);
             bool playerOCell = i_Row < numberOfRowsForPlayer;
             bool playerXCell = i_Row >= numberOfRowsForPlayer + 2;

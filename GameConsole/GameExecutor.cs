@@ -27,16 +27,6 @@ namespace GameConsole
             play();
         }
 
-        private Game Checkers
-        {
-            get { return m_Game; }
-        }
-
-        public UserCommunicator Communicator
-        {
-            get { return m_Communicator; }
-        }
-
         public GameExecutor()
         {
             m_Communicator = new UserCommunicator();
@@ -48,33 +38,52 @@ namespace GameConsole
             m_Game = new Game(newGamePref);
         }
 
-        private void play() // MAY BE AN ABUSE TO USE THE PROPERTIES FEATURE INSIDE THE CLASS (PROBABLY)
+        private void play()
         {
+            bool keepPlaying = true;
             UserMoveInput userMove;
             string errorMessage = "";
-            while (Checkers.OnGoing)
+            while (keepPlaying)
             {
-                Checkers.PrintBoard();
-                Communicator.InformWhosTurn(m_Game.WhosTurnName);
-                if(Checkers.isMachineTurn())
+                while (m_Game.OnGoing)
                 {
-                    Checkers.MakeComputerMove();
-                }
-                else
-                {
-                    userMove = Communicator.getAndValidateMoveInputFromUser();
-                    while (!Checkers.IsValidMove(userMove.From, userMove.To, out errorMessage))
-                    {
-                        Communicator.InformError(errorMessage);
-                        userMove = Communicator.getAndValidateMoveInputFromUser();
-                    }
+                    m_Game.PrintBoard();
+                    m_Communicator.InformWhosTurn(m_Game.WhosTurnName);
 
-                    Checkers.MakeHumanMove(userMove.From, userMove.To);
+                    if (m_Game.isMachineTurn())
+                    {
+                        m_Game.MakeComputerMove();
+                    }
+                    else
+                    {
+                        userMove = m_Communicator.getAndValidateMoveInputFromUser();
+                        if (userMove.EndGame)
+                        {
+                            m_Game.PlayerQuits();
+                        }
+                        else
+                        {
+                            while (!m_Game.IsValidMove(userMove.From, userMove.To, out errorMessage))
+                            {
+                                m_Communicator.InformError(errorMessage);
+                                userMove = m_Communicator.getAndValidateMoveInputFromUser();
+                            }
+
+                            m_Game.MakeHumanMove(userMove.From, userMove.To);
+                        }
+                    }
+                }
+
+                m_Game.PrintBoard();
+                // print game RESULT - winner/tie
+                m_Communicator.InformWinner(m_Game.Winner);
+                m_Communicator.InformWinnerScore(m_Game.getWinnerScore());
+                keepPlaying = m_Communicator.newRoundPrompt();
+                if (keepPlaying)
+                {
+                    m_Game.Reset();
                 }
             }
-           
-            Checkers.PrintBoard();
-            Communicator.InformWinner(Checkers.Winner);
         }
     }
 }

@@ -77,6 +77,34 @@ namespace User_Interface
             return allLetters;
         }
 
+        public void InformWinnerScore(int i_Score)
+        {
+            Console.WriteLine("Score:" + i_Score);
+        }
+
+        public bool newRoundPrompt()
+        {
+
+            Console.WriteLine("Would you like to play again? (y/n)");
+            char yesOrNo = getAndValidateYesOrNoFromUser();
+            return yesOrNo == 'y';
+        }
+
+        private char getAndValidateYesOrNoFromUser()
+        {
+            char yesOrNo;
+            bool parsing = char.TryParse(Console.ReadLine(), out yesOrNo);
+            bool validChar = yesOrNo == 'y' || yesOrNo == 'n';
+            while(!parsing || !validChar)
+            {
+                Console.WriteLine("Invalid input, please try again");
+                parsing = char.TryParse(Console.ReadLine(), out yesOrNo);
+                validChar = yesOrNo == 'y' || yesOrNo == 'n';
+            }
+
+            return yesOrNo;
+        }
+
         public int getAndValidateBoardSizeFromUser()
         {
             Console.WriteLine("Please enter desired board size (6/8/10)");
@@ -117,17 +145,24 @@ namespace User_Interface
             Console.WriteLine("Make your move (For example: Ab>Cd)");
             UserMoveInput userMove = new UserMoveInput();
             string userInput = Console.ReadLine();
-            while(!validateUserMoveInput(userInput))
+            if (userInput == "Q")
             {
-                InformError("Wrong input, input should be in following format: Ab>Cd");
-                userInput = Console.ReadLine();
-                validateUserMoveInput(userInput);
+                userMove.EndGame = true;
             }
+            else
+            {
+                while (!validateUserMoveInput(userInput))
+                {
+                    InformError("Wrong input, input should be in following format: Ab>Cd");
+                    userInput = Console.ReadLine();
+                    validateUserMoveInput(userInput);
+                }
 
-            string from = userInput.Substring(0, 2);
-            string to = userInput.Substring(3, 2);
-            userMove.From = new Point(charToIndex(from[1]), charToIndex(from[0]));
-            userMove.To = new Point(charToIndex(to[1]), charToIndex(to[0]));
+                string from = userInput.Substring(0, 2);
+                string to = userInput.Substring(3, 2);
+                userMove.From = new Point(charToIndex(from[1]), charToIndex(from[0]));
+                userMove.To = new Point(charToIndex(to[1]), charToIndex(to[0]));
+            }
 
             return userMove;
         }
