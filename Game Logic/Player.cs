@@ -14,16 +14,16 @@ namespace Game_Logic
     internal class Player
     {
         private ePlayerType m_PlayerType;
-        private eToken m_Token;
+        private eTeamBaseSide m_Team;
         private string m_Name;
         private int m_Score = 0;
         private List<Piece> m_Pieces;
 
-        internal Player(string i_Name, eToken i_Token, ePlayerType i_Type = ePlayerType.Machine) //2 Players Machine issue
+        internal Player(string i_Name, eTeamBaseSide i_Team, ePlayerType i_Type = ePlayerType.Machine) //2 Players Machine issue
         {
             m_Name = i_Name;
             m_PlayerType = i_Type;
-            m_Token = i_Token;
+            m_Team = i_Team;
             m_Pieces = new List<Piece>();
         }
 
@@ -44,9 +44,9 @@ namespace Game_Logic
             set { m_Score = value; }
         }
 
-        public eToken Token
+        public eTeamBaseSide Token
         {
-            get { return m_Token;}
+            get { return m_Team;}
         }
 
         public string Name
