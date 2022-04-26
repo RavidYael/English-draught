@@ -13,7 +13,7 @@ namespace Game_Logic
         private GameBoard m_Board;
         private Player m_PlayerO;
         private Player m_PlayerX;
-        private eToken m_WhosTurn;
+        private eTeamBaseSide m_WhosTurn;
         private bool m_GameOnGoing = true;
         private string m_Winner;
         private GamePrefernces m_GamePrefernces;
@@ -55,9 +55,9 @@ namespace Game_Logic
         {
             m_GamePrefernces = i_GamePrefernces;
             m_Board = new GameBoard(m_GamePrefernces.BoardSize);
-            m_PlayerO = new Player(m_GamePrefernces.OPlayerName, eToken.O, ePlayerType.Human);
-            m_PlayerX = new Player(m_GamePrefernces.XPlayerName, eToken.X);
-            m_WhosTurn = eToken.O;
+            m_PlayerO = new Player(m_GamePrefernces.OPlayerName, eTeamBaseSide.Top, ePlayerType.Human);
+            m_PlayerX = new Player(m_GamePrefernces.XPlayerName, eTeamBaseSide.Buttom);
+            m_WhosTurn = eTeamBaseSide.Top;
 
             if (m_GamePrefernces.NumberOfHumanPlayers == 2)
             {
@@ -67,6 +67,11 @@ namespace Game_Logic
             initializePiecesForPlayers();
             updateValidMovesForPlayer(m_PlayerO);
             updateValidMovesForPlayer(m_PlayerX);
+        }
+
+        public GameBoard GameBoard
+        {
+            get { return m_Board; }
         }
 
         public void PlayerQuits()
@@ -86,10 +91,10 @@ namespace Game_Logic
             }
         }
 
-        private Player getPlayerByToken(eToken i_Token)
+        private Player getPlayerByToken(eTeamBaseSide i_Token)
         {
             Player returnedPlayer = null;
-            if (i_Token == eToken.O)
+            if (i_Token == eTeamBaseSide.Top)
             {
                 returnedPlayer = m_PlayerO;
             }
@@ -117,16 +122,16 @@ namespace Game_Logic
             return toReturn;
         }
 
-        private eToken getOppositeToken(eToken i_Token)
+        private eTeamBaseSide getOppositeToken(eTeamBaseSide i_Token)
         {
-            eToken oppositeToken;
-            if (i_Token == eToken.O)
+            eTeamBaseSide oppositeToken;
+            if (i_Token == eTeamBaseSide.Top)
             {
-                oppositeToken = eToken.X;
+                oppositeToken = eTeamBaseSide.Buttom;
             }
             else
             {
-                oppositeToken = eToken.O;
+                oppositeToken = eTeamBaseSide.Top;
             }
 
             return oppositeToken;
@@ -147,20 +152,15 @@ namespace Game_Logic
             List<Piece> allPieces = m_Board.allPieces;
             foreach (Piece piece in allPieces)
             {
-                if (piece.Token == eToken.X)
+                if (piece.OwnerBaseSide == eTeamBaseSide.Buttom)
                 {
                     m_PlayerX.addPiece(piece);
                 }
-                else if (piece.Token == eToken.O)
+                else if (piece.OwnerBaseSide == eTeamBaseSide.Top)
                 {
                     m_PlayerO.addPiece(piece);
                 }
             }
-        }
-
-        public void PrintBoard()
-        {
-            m_Board.PrintBoard();
         }
 
         private void generateValidMovesForPiece(Piece i_Piece)
@@ -210,7 +210,7 @@ namespace Game_Logic
             Cell currentCell = m_Board.getCell(i_Piece.Location.Row, i_Piece.Location.Column);
             Cell optionalCellToEat = m_Board.getCell(i_Piece.Location.Row + i_direction.VerticalMove, i_Piece.Location.Column + i_direction.HorizonalMove);
 
-            if ((optionalCellToEat != null) && optionalCellToEat.Piece.Token != i_Piece.Token)
+            if ((optionalCellToEat != null) && optionalCellToEat.Piece.OwnerBaseSide != i_Piece.OwnerBaseSide)
             {
                 int afterEatRow = optionalCellToEat.Location.Row + i_direction.VerticalMove;
                 int afterEatColumn = optionalCellToEat.Location.Column + i_direction.HorizonalMove;
@@ -236,11 +236,11 @@ namespace Game_Logic
             {
                 optionalDirections = Move.Directions.KingDirections;
             }
-            else if (i_Piece.Token == eToken.X)
+            else if (i_Piece.OwnerBaseSide == eTeamBaseSide.Buttom)
             {
                 optionalDirections = Move.Directions.XPawnDirections;
             }
-            else if (i_Piece.Token == eToken.O)
+            else if (i_Piece.OwnerBaseSide == eTeamBaseSide.Top)
             {
                 optionalDirections = Move.Directions.OPawnDirections;
             }
@@ -359,7 +359,7 @@ namespace Game_Logic
 
         private void removePieceFromPlayer(Piece i_PieceToRemove)
         {
-            if (i_PieceToRemove.Token == eToken.O)
+            if (i_PieceToRemove.OwnerBaseSide == eTeamBaseSide.Top)
             {
                 m_PlayerO.removePiece(i_PieceToRemove);
             }
@@ -392,7 +392,7 @@ namespace Game_Logic
                     o_ErrorMessage = "Invalid move: No piece in that given location";
                     validMove = false;
                 }
-                else if (from.Piece.Token != m_WhosTurn)
+                else if (from.Piece.OwnerBaseSide != m_WhosTurn)
                 {
                     o_ErrorMessage = string.Format("Invalid move: It is {0}'s turn", m_WhosTurn);
                     validMove = false;
@@ -422,7 +422,7 @@ namespace Game_Logic
             initializePiecesForPlayers();
             updateValidMovesForPlayer(m_PlayerO);
             updateValidMovesForPlayer(m_PlayerX);
-            m_WhosTurn = eToken.O;
+            m_WhosTurn = eTeamBaseSide.Top;
         }
 
         public bool OnGoing
