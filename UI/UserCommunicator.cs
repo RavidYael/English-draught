@@ -197,7 +197,6 @@ namespace User_Interface
 
             return resultingIndex;
         }
-
         public void PrintBoard(GameBoard i_Board)
         {
             Ex02.ConsoleUtils.Screen.Clear();

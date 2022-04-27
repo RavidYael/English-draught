@@ -13,12 +13,9 @@ namespace Game_Logic
         private Cell m_MoveTo;
         private bool m_isEatingMove = false;
         private Cell m_EatenCell;
+        private Piece m_EatenPiece;
         internal static class Directions
         {
-            public static readonly Direction UP = new Direction(-1, 0);
-            public static readonly Direction DOWN = new Direction(1, 0);
-            public static readonly Direction RIGHT = new Direction(0, 1);
-            public static readonly Direction LEFT = new Direction(0, -1);
 
             public static readonly Direction UP_RIGHT = new Direction(-1, 1);
             public static readonly Direction UP_LEFT = new Direction(-1, -1);
@@ -34,7 +31,7 @@ namespace Game_Logic
             {
                 OPawnDirections = new Direction[2] { DOWN_RIGHT, DOWN_LEFT };
                 XPawnDirections = new Direction[2] { UP_RIGHT, UP_LEFT };
-                KingDirections = new Direction[8] { UP_RIGHT, DOWN_RIGHT, DOWN_LEFT, UP_LEFT, UP, RIGHT, DOWN, LEFT };
+                KingDirections = new Direction[4] { UP_RIGHT, DOWN_RIGHT, DOWN_LEFT, UP_LEFT};
             }
             internal class Direction
             {
@@ -89,5 +86,16 @@ namespace Game_Logic
             get { return m_MoveFrom; }
         }
 
+        internal void RemenberVirtualEatenPiece(Piece i_PieceToBeEaten)
+        {
+            m_EatenPiece = i_PieceToBeEaten;
+        }
+
+        internal Piece getPieceEatenByMove()
+        {
+            Piece eatenPiece = m_EatenPiece;
+            m_EatenPiece = null;
+            return eatenPiece;
+        }
     }
 }

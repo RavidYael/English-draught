@@ -84,7 +84,7 @@ namespace Game_Logic
             return desiredMove;
         }
 
-        public bool getEatingMove(out Move o_Move)
+        public bool getEatingMoveAndReturnIfFoundOne(out Move o_Move)
         {
             bool foundEatingMove = false;
             o_Move = null;

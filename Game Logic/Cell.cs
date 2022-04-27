@@ -73,6 +73,5 @@ namespace Game_Logic
             m_Piece = i_Piece;
             m_Piece.Location = m_Location;
         }
-
     }
 }
