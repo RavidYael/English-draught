@@ -44,7 +44,7 @@ namespace Game_Logic
             set { m_Score = value; }
         }
 
-        public eTeamBaseSide Token
+        public eTeamBaseSide BaseSide
         {
             get { return m_Team;}
         }
@@ -64,7 +64,7 @@ namespace Game_Logic
             m_Pieces.Remove(i_Piece);
         }
 
-         internal bool IsOutOfMoves()
+        internal bool IsOutOfMoves()
          {
              bool outOfMoves = true;
              foreach(Piece piece in m_Pieces)
@@ -145,5 +145,39 @@ namespace Game_Logic
          {
              m_Pieces.Clear();
          }
+        internal List<Move> GetPossibleMoves()
+        {
+            List<Move> allMoves = new List<Move>();
+            List<Move> eatingMoves = new List<Move>();
+            List<Move> validMoves = null;
+
+            foreach (Piece piece in m_Pieces)
+            {
+                foreach (Move pieceValidMove in piece.ValidMoves)
+                {
+                    allMoves.Add(pieceValidMove);
+                }
+            }
+
+            foreach (Move move in allMoves)
+            {
+                if (move.IsEatingMove)
+                {
+                    eatingMoves.Add(move);
+                }
+            }
+            
+            if(eatingMoves.Count > 0)
+            {
+                validMoves = eatingMoves;
+            }
+            else
+            {
+                validMoves = allMoves;
+            }
+
+            return validMoves;
+        }
+
     }
 }
