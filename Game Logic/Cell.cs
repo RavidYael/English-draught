@@ -74,5 +74,9 @@ namespace Game_Logic
             m_Piece.Location = m_Location;
         }
 
+        internal void addPieceToCell()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
