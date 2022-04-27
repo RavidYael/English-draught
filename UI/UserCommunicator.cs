@@ -14,11 +14,6 @@ namespace User_Interface
             Console.WriteLine(i_PlayerName + "'s turn");
         }
 
-        public Exception PrintBoard()
-        {
-            return new NotImplementedException();
-        }
-
         public Game.GamePrefernces GetAndValidateGamePrefernces()
         {
             Game.GamePrefernces newGamePref = new Game.GamePrefernces();
@@ -82,7 +77,7 @@ namespace User_Interface
             Console.WriteLine("Score:" + i_Score);
         }
 
-        public bool newRoundPrompt()
+        public bool CheckIfUserWantToPlayAgain()
         {
 
             Console.WriteLine("Would you like to play again? (y/n)");
@@ -201,6 +196,76 @@ namespace User_Interface
             }
 
             return resultingIndex;
+        }
+
+        public void PrintBoard(GameBoard i_Board)
+        {
+            Ex02.ConsoleUtils.Screen.Clear();
+            Console.Write("   ");
+            for (int k = 0; k < i_Board.Size ; k++)
+            {
+                Console.Write(" " + (char)(k + 65) + "  ");
+            }
+
+            Console.WriteLine();
+            Console.Write("  ");
+            for (int l = 0; l < i_Board.Size; l++)
+            {
+                Console.Write("====");
+            }
+
+            Console.WriteLine("=");
+            for (int row = 0; row < i_Board.Size; row++)
+            {
+                Console.Write((char)(row + 97) + " ");
+                for (int col = 0; col < i_Board.Size; col++)
+                {
+                    Console.Write("|");
+                    if (!i_Board.IsCoordinateOccupied(row, col))
+                    {
+                        Console.Write("   ");
+                    }
+                    else
+                    {
+                        if (i_Board.GetOwnerBaseSideOfPieceInCoordinate(row, col) == eTeamBaseSide.Top)
+                        {
+                            if (i_Board.IsPieceInCoordinateKing(row, col))
+                            {
+                                Console.Write(" U ");
+                            }
+                            else
+                            {
+                                Console.Write(" O ");
+                            }
+                        }
+                        else // OwnerBaseSideOfPiece is eTeamBaseSide.Buttom
+                        {
+                            if (i_Board.IsPieceInCoordinateKing(row, col))
+                            {
+                                Console.Write(" K ");
+                            }
+                            else
+                            {
+                                Console.Write(" X ");
+                            }
+                        }
+                    }
+
+                    if (col == i_Board.Size - 1)
+                    {
+                        Console.Write("|");
+                    }
+                }
+
+                Console.WriteLine();
+                Console.Write("  ");
+                for (int l = 0; l < i_Board.Size ; l++)
+                {
+                    Console.Write("====");
+                }
+
+                Console.WriteLine("=");
+            }
         }
     }
 }

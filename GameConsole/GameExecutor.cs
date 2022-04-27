@@ -47,7 +47,7 @@ namespace GameConsole
             {
                 while (m_Game.OnGoing)
                 {
-                    m_Game.PrintBoard();
+                    m_Communicator.PrintBoard(m_Game.GameBoard);
                     m_Communicator.InformWhosTurn(m_Game.WhosTurnName);
 
                     if (m_Game.isMachineTurn())
@@ -63,7 +63,7 @@ namespace GameConsole
                         }
                         else
                         {
-                            while (!m_Game.IsValidMove(userMove.From, userMove.To, out errorMessage))
+                            while (!m_Game.IsValidMove(userMove.From, userMove.To, out errorMessage)) //MAYBE STRINGBUILDER(I FOUND JUST RESONS WHY NOT TO), BUT WHAT WITH THE OUT? STRING IS IMMUTABLE AND REFERNCED TYPE ALREADY
                             {
                                 m_Communicator.InformError(errorMessage);
                                 userMove = m_Communicator.getAndValidateMoveInputFromUser();
@@ -74,11 +74,11 @@ namespace GameConsole
                     }
                 }
 
-                m_Game.PrintBoard();
+                m_Communicator.PrintBoard(m_Game.GameBoard);
                 // print game RESULT - winner/tie
                 m_Communicator.InformWinner(m_Game.Winner);
                 m_Communicator.InformWinnerScore(m_Game.getWinnerScore());
-                keepPlaying = m_Communicator.newRoundPrompt();
+                keepPlaying = m_Communicator.CheckIfUserWantToPlayAgain();
                 if (keepPlaying)
                 {
                     m_Game.Reset();

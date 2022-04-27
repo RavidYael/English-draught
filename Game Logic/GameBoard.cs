@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Game_Logic
 {
-    internal class GameBoard
+    public class GameBoard
     {
         private Cell [,] m_Board;
         private List<Piece> m_AllPieces;
@@ -41,11 +41,11 @@ namespace Game_Logic
             {
                 if(playerOCell)
                 {
-                    newPiece = new Piece(eToken.O, newCell.Location);
+                    newPiece = new Piece(eTeamBaseSide.Top, newCell.Location);
                 }
                 else if(playerXCell)
                 {
-                    newPiece = new Piece(eToken.X, newCell.Location);
+                    newPiece = new Piece(eTeamBaseSide.Buttom, newCell.Location);
                 }
 
                 newCell = new Cell(i_Row, i_Column, newPiece);
@@ -60,7 +60,7 @@ namespace Game_Logic
             return (i_Row % 2) != (i_Column % 2);
         }
 
-        internal int Size
+        public int Size
         {
             get { return m_Size; }
         }
@@ -83,76 +83,6 @@ namespace Game_Logic
         internal List<Piece> allPieces
         {
             get {return m_AllPieces;}
-        }
-
-        internal void PrintBoard()
-        {
-            Console.Write("   ");
-            for (int k = 0; k < m_Size; k++)
-            {
-                Console.Write(" " + (char)(k + 65) + "  ");
-            }
-
-            Console.WriteLine();
-            Console.Write("  ");
-            for (int l = 0; l < m_Size; l++)
-            {
-                Console.Write("====");
-            }
-
-            Console.WriteLine("=");
-            for (int i = 0; i < m_Size; i++)
-            {
-                Console.Write((char)(i + 97) + " ");
-                for(int j = 0; j < m_Size; j++)
-                {
-                    Console.Write("|");
-                    if(!m_Board[i, j].Occupation)
-                    {
-                        Console.Write("   ");
-                    }
-
-                    else
-                    {
-                        if(m_Board[i, j].Piece.Token == eToken.O)
-                        {
-                            if(!m_Board[i, j].Piece.IsKing)
-                            {
-                                Console.Write(" O ");
-                            }
-                            else
-                            {
-                                Console.Write(" U ");
-                            }
-                        }
-                        else
-                        {
-                            if(!m_Board[i, j].Piece.IsKing)
-                            {
-                                Console.Write(" X ");
-                            }
-                            else
-                            {
-                                Console.Write(" K ");
-                            }
-                        }
-                    }
-
-                    if (j == m_Size - 1)
-                    {
-                        Console.Write("|");
-                    }
-                }
-
-                Console.WriteLine();
-                Console.Write("  ");
-                for (int l = 0; l < m_Size; l++)
-                {
-                    Console.Write("====");
-                }
-
-                Console.WriteLine("=");
-            }
         }
 
         internal Cell getCell(int i_Row, int i_Column)
@@ -221,6 +151,22 @@ namespace Game_Logic
             i_MoveTo.placePiece(i_MoveFrom.Piece);
             i_MoveFrom.Occupation = false;
             i_MoveFrom.Piece = null;
+        }
+
+        public bool IsCoordinateOccupied(int i_Row, int i_Col)
+        {
+            Cell cellInCoordinate = getCell(i_Row,i_Col);
+            return cellInCoordinate.Occupation;
+        }
+
+        public eTeamBaseSide GetOwnerBaseSideOfPieceInCoordinate(int i_Row, int i_Col)
+        {
+            return getCell(i_Row, i_Col).Piece.OwnerBaseSide;
+        }
+
+        public bool IsPieceInCoordinateKing(int i_Row, int i_Col)
+        {
+            return getCell(i_Row, i_Col).Piece.IsKing;
         }
     }
 }

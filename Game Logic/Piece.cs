@@ -6,29 +6,29 @@ using System.Threading.Tasks;
 
 namespace Game_Logic
 {
-    enum eToken
+    public enum eTeamBaseSide
     {
-        O, X
+        Top, Buttom
     }
 
     internal class Piece
     {
-        private eToken m_Token;
+        private eTeamBaseSide m_OwnerBaseSide;
         private bool m_IsKing = false;
         private Point m_Location;
         private List<Move> m_ValidMoves;
-        internal Piece(eToken i_Token, Point i_location)
+        internal Piece(eTeamBaseSide i_OwnerTeamSide, Point i_location)
         {
-            m_Token = i_Token;
+            m_OwnerBaseSide = i_OwnerTeamSide;
             m_Location = i_location;
             m_ValidMoves = new List<Move>();
         }
 
-        internal eToken Token
+        internal eTeamBaseSide OwnerBaseSide
         {
-            get { return m_Token; }
+            get { return m_OwnerBaseSide; }
 
-            set { m_Token = value; }
+            set { m_OwnerBaseSide = value; }
         }
 
         internal bool IsKing
@@ -100,7 +100,7 @@ namespace Game_Logic
             return foundEatingMove;
         }
 
-        public void makeKing()
+        internal void makeKing()
         {
             m_IsKing = true;
         }
