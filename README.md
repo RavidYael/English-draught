@@ -18,17 +18,6 @@
 
 The AI component utilizes a sophisticated algorithm combining minimax strategies and heuristic evaluations to determine optimal moves, providing a challenging and engaging experience for players of all levels.
 
-## Getting Started
-
-Instructions on setting up the project locally, compiling the source code, and starting the game will go here.
-
-## Contributing
-
-Details on how other developers can contribute to the project, report bugs, or suggest enhancements.
-
-## License
-
-Information about the project license and terms of use.
 
 <p align="center" style="font-family: 'Arial', sans-serif; font-size: 16px; color: #3079ed;">
   Ready for a game of strategic depth and challenge? Try C# Checkers with AI now.
